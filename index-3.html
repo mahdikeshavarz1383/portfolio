@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mahdi Keshavarz — Systems &amp; DevOps</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #12161c;
+    --bg-raised: #181e26;
+    --line: #262e38;
+    --text: #e8e6e1;
+    --text-dim: #8b94a1;
+    --amber: #e8a33d;
+    --teal: #4fb0ae;
+    --ok: #6fbf73;
+    --font-head: 'Space Grotesk', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+    --font-fa: 'Vazirmatn', 'Space Grotesk', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-head);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  body.rtl{font-family:var(--font-fa); line-height:1.9;}
+  body.rtl .status-line,
+  body.rtl .log-meta,
+  body.rtl .fix-label,
+  body.rtl .contact-list,
+  body.rtl footer{font-family:var(--font-fa);}
+  .lang-btn{
+    font-family:var(--font-mono); font-size:13px; color:var(--text-dim);
+    background:transparent; border:1px solid var(--line); border-radius:4px;
+    padding:4px 10px; cursor:pointer;
+  }
+  .lang-btn:hover{color:var(--amber); border-color:var(--amber);}
+  a{color:var(--teal); text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--amber); outline-offset:3px;}
+  .wrap{max-width:760px; margin:0 auto; padding:0 24px;}
+
+  /* ---- Hero ---- */
+  header.hero{padding:120px 0 80px; border-bottom:1px solid var(--line);}
+  .status-line{
+    font-family:var(--font-mono); font-size:13px; color:var(--amber);
+    display:flex; align-items:center; gap:8px; margin-bottom:28px;
+  }
+  .dot{width:8px; height:8px; border-radius:50%; background:var(--ok); box-shadow:0 0 0 3px rgba(111,191,115,0.15);}
+  h1{
+    font-size:clamp(2.2rem, 5vw, 3.4rem);
+    font-weight:600;
+    line-height:1.15;
+    letter-spacing:-0.02em;
+    max-width:14ch;
+  }
+  .role{
+    font-size:1.05rem; color:var(--text-dim); margin-top:18px; max-width:48ch;
+  }
+  .hero-links{margin-top:32px; display:flex; gap:20px; flex-wrap:wrap; font-family:var(--font-mono); font-size:14px;}
+
+  /* ---- Section shell ---- */
+  section{padding:64px 0; border-bottom:1px solid var(--line);}
+  section:last-of-type{border-bottom:none;}
+  h2{
+    font-size:1.5rem; font-weight:600; margin-bottom:8px;
+  }
+  .section-note{color:var(--text-dim); font-size:0.95rem; margin-bottom:36px; max-width:52ch;}
+  .role-tags{display:flex; gap:10px; flex-wrap:wrap; margin:14px 0 20px;}
+  .role-tag{
+    font-family:var(--font-mono); font-size:12.5px; color:var(--amber);
+    border:1px solid rgba(232,163,61,0.35); background:rgba(232,163,61,0.08);
+    padding:5px 12px; border-radius:20px;
+  }
+
+  /* ---- Skills ---- */
+  .skill-groups{display:grid; grid-template-columns:1fr 1fr; gap:28px 40px;}
+  .skill-group h3{
+    font-family:var(--font-mono); font-size:12px; color:var(--amber);
+    letter-spacing:0.03em; margin-bottom:12px; text-transform:lowercase;
+  }
+  .skill-group ul{list-style:none;}
+  .skill-group li{
+    padding:7px 0; border-bottom:1px dashed var(--line); font-size:0.95rem;
+  }
+  .skill-group li:last-child{border-bottom:none;}
+
+  /* ---- Troubleshooting log ---- */
+  .log-entry{
+    background:var(--bg-raised);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:22px 24px;
+    margin-bottom:16px;
+  }
+  .log-meta{
+    font-family:var(--font-mono); font-size:12px; color:var(--text-dim);
+    display:flex; gap:14px; flex-wrap:wrap; margin-bottom:10px; align-items:center;
+  }
+  .log-status{
+    color:var(--ok); border:1px solid rgba(111,191,115,0.35);
+    padding:2px 8px; border-radius:3px; font-size:11px;
+  }
+  .log-entry h3{font-size:1.05rem; font-weight:600; margin-bottom:8px;}
+  .log-entry p{color:var(--text-dim); font-size:0.93rem;}
+  .log-entry p + p{margin-top:8px;}
+  .log-entry .fix-label{
+    font-family:var(--font-mono); font-size:11px; color:var(--teal);
+  }
+
+  /* ---- Contact ---- */
+  .contact-list{list-style:none; font-family:var(--font-mono); font-size:0.95rem;}
+  .contact-list li{padding:10px 0; border-bottom:1px dashed var(--line); display:flex; gap:16px;}
+  .contact-list li:last-child{border-bottom:none;}
+  .contact-list span{color:var(--text-dim); min-width:90px;}
+
+  footer{padding:40px 0 60px; text-align:center; color:var(--text-dim); font-size:0.85rem; font-family:var(--font-mono);}
+
+  @media (max-width:600px){
+    header.hero{padding:80px 0 56px;}
+    .skill-groups{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="status-line"><span class="dot"></span><span data-fa="آماده همکاری فریلنس و دورکاری">available for freelance &amp; remote work</span></div>
+    <h1>Mahdi Keshavarz</h1>
+    <p class="role" data-fa="تکنسین هلپ‌دسک در مسیر یادگیری DevOps و مدیریت سیستم لینوکس — با پس‌زمینه Node.js و تجربه‌ی عملی روی Docker، دیپلوی روی VPS و عیب‌یابی شبکه.">Helpdesk technician building toward DevOps and Linux system administration — Node.js background, hands-on with Docker, VPS deployment, and network troubleshooting.</p>
+    <div class="hero-links">
+      <a href="#skills" data-fa="مهارت‌ها">Skills</a>
+      <a href="voip.html">VoIP</a>
+      <a href="#log" data-fa="گزارش عیب‌یابی">Troubleshooting Log</a>
+      <a href="#contact" data-fa="تماس">Contact</a>
+      <a href="https://github.com/mahdikeshavarz1383" target="_blank" rel="noopener">GitHub</a>
+      <button class="lang-btn" id="langToggle" type="button">فارسی</button>
+    </div>
+  </div>
+</header>
+
+<section id="skills">
+  <div class="wrap">
+    <h2 data-fa="مهارت‌ها">Skills</h2>
+    <div class="role-tags">
+      <span class="role-tag" data-fa="تکنسین هلپ‌دسک و مهندس DevOps">Helpdesk and DevOps Engineer</span>
+      <span class="role-tag" data-fa="برنامه‌نویس (Node.js)">Programmer (Node.js)</span>
+    </div>
+    <p class="section-note" data-fa="این لیست رو با استک فعلی خودت هماهنگ کن — این فقط یه اسکلت شروعیه.">Edit this list to match your current stack — this is a starting scaffold.</p>
+    <div class="skill-groups">
+      <div class="skill-group">
+        <h3 data-fa="سیستم و شبکه">systems &amp; networking</h3>
+        <ul>
+          <li data-fa="مدیریت لینوکس">Linux administration</li>
+          <li data-fa="مبانی Network+‏ (TCP/IP، DNS، مسیریابی)">Network+ fundamentals (TCP/IP, DNS, routing)</li>
+          <li data-fa="راه‌اندازی و سخت‌سازی VPS">VPS setup &amp; hardening</li>
+          <li data-fa="Nginx و ریورس پراکسی">Nginx / reverse proxies</li>
+          <li><a href="voip.html">VoIP</a></li>
+        </ul>
+      </div>
+      <div class="skill-group">
+        <h3 data-fa="دواپس و ابزارها">devops &amp; tooling</h3>
+        <ul>
+          <li data-fa="Docker و Docker Compose">Docker &amp; Docker Compose</li>
+          <li data-fa="مبانی CI/CD">CI/CD fundamentals</li>
+          <li data-fa="مانیتورینگ و هشدار با Uptime Kuma">Uptime Kuma / monitoring &amp; alerting</li>
+          <li data-fa="مدیریت سرویس با systemd">systemd service management</li>
+          <li><a href="mtproto.html">MTProto</a></li>
+        </ul>
+      </div>
+      <div class="skill-group">
+        <h3 data-fa="توسعه">development</h3>
+        <ul>
+          <li data-fa="Node.js (API، بات، اتوماسیون)">Node.js (APIs, bots, automation)</li>
+          <li>MongoDB</li>
+          <li data-fa="اسکریپت‌نویسی Bash">Bash scripting</li>
+        </ul>
+      </div>
+      <div class="skill-group">
+        <h3 data-fa="پشتیبانی">support</h3>
+        <ul>
+          <li data-fa="عیب‌یابی IT / هلپ‌دسک">IT / helpdesk troubleshooting</li>
+          <li data-fa="پشتیبانی و مستندسازی برای کاربر نهایی">End-user support &amp; documentation</li>
+          <li data-fa="اولویت‌بندی حوادث">Incident triage</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="log">
+  <div class="wrap">
+    <h2 data-fa="گزارش عیب‌یابی">Troubleshooting Log</h2>
+    <p class="section-note" data-fa="مشکلات واقعی، راه‌حل‌های واقعی — به همون سبکی که یه جواب StackOverflow می‌نویسی. این‌ها رو با موارد واقعی خودت جایگزین کن.">Real problems, real fixes — written up the way you'd document a StackOverflow answer. Replace these with your own cases.</p>
+
+    <div class="log-entry">
+      <div class="log-meta">
+        <span>#TS-001</span>
+        <span class="log-status" data-fa="رفع‌شده">resolved</span>
+        <span>docker · networking</span>
+      </div>
+      <h3 data-fa="API کانتینری نمی‌تونست به MongoDB روی همون VPS وصل بشه">Containerized API couldn't reach MongoDB on the same VPS</h3>
+      <p data-fa="کانتینر API نود جی‌اس درست بالا می‌اومد ولی هر درخواست به دیتابیس تایم‌اوت می‌شد، با اینکه MongoDB روشن بود و از روی هاست در دسترس بود.">The Node.js API container started fine but every DB call timed out, even though MongoDB was running and reachable from the host.</p>
+      <p class="fix-label" data-fa="علت">root cause</p>
+      <p data-fa="کانتینر برای رسیدن به Mongo از localhost استفاده می‌کرد، که داخل کانتینر به خودش اشاره می‌کنه، نه به هاست.">The container was using <code>localhost</code> to reach Mongo, which inside a container points to itself, not the host.</p>
+      <p class="fix-label" data-fa="راه‌حل">fix</p>
+      <p data-fa="هر دو سرویس رو روی یه شبکه‌ی داکری تعریف‌شده گذاشتم و Mongo رو با اسم کانتینرش صدا زدم، نه localhost.">Put both services on the same user-defined Docker network and referenced Mongo by its container name instead of localhost.</p>
+    </div>
+
+    <div class="log-entry">
+      <div class="log-meta">
+        <span>#TS-002</span>
+        <span class="log-status" data-fa="رفع‌شده">resolved</span>
+        <span>vpn · filtering</span>
+      </div>
+      <h3 data-fa="تونل WireGuard وصل می‌شد ولی کل ترافیک قطع بود">WireGuard tunnel connected but dropped all traffic</h3>
+      <p data-fa="handshake با موفقیت انجام می‌شد و اینترفیس بالا می‌اومد، ولی هیچ پکتی واقعاً رد نمی‌شد — اتصال ظاهراً سالم بود ولی قابل استفاده نبود.">Handshake succeeded, the interface came up, but no packets actually got through — connection looked healthy while being unusable.</p>
+      <p class="fix-label" data-fa="علت">root cause</p>
+      <p data-fa="فیلترینگ عمیق بسته (DPI) در سطح ISP الگوی handshake وایرگارد رو شناسایی و محدود می‌کرد.">ISP-level deep packet inspection was fingerprinting and throttling the WireGuard handshake pattern.</p>
+      <p class="fix-label" data-fa="راه‌حل">fix</p>
+      <p data-fa="این حالت خرابی رو مستند کردم و به‌جای دست‌وپنجه نرم کردن با DPI در سطح پروتکل، سراغ یه روش دیگه رفتم — گاهی راه‌حل درست، دونستن جای توقفه.">Documented the failure mode and moved to a different approach rather than fighting DPI at the protocol level — sometimes the right fix is knowing when to stop.</p>
+    </div>
+
+    <div class="log-entry">
+      <div class="log-meta">
+        <span>#TS-003</span>
+        <span class="log-status" data-fa="رفع‌شده">resolved</span>
+        <span>monitoring</span>
+      </div>
+      <h3 data-fa="قطعی سرویس‌ها ساعت‌ها بعد متوجه می‌شدیم">Service outages were only noticed hours later</h3>
+      <p data-fa="یه پروسه‌ی بات در پس‌زمینه بی‌سروصدا می‌مرد و هیچ‌کس — حتی خودم — تا شکایت یه کاربر خبردار نمی‌شد.">A background bot process would silently die and no one — including me — knew until a user complained.</p>
+      <p class="fix-label" data-fa="راه‌حل">fix</p>
+      <p data-fa="Uptime Kuma رو با هشدار تلگرامی راه انداختم تا هر قطعی بلافاصله اطلاع بده، نه اینکه منتظر گزارش کاربر بمونیم.">Set up Uptime Kuma with Telegram alerting so any downtime triggers an immediate notification instead of waiting for user reports.</p>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <h2 data-fa="تماس">Contact</h2>
+    <p class="section-note" data-fa="قبل از دیپلوی، این‌ها رو با آدرس‌های واقعی خودت جایگزین کن.">Replace with your real handles before deploying.</p>
+    <ul class="contact-list">
+      <li><span data-fa="ایمیل">email</span> your@email.com</li>
+      <li><span data-fa="گیت‌هاب">github</span> <a href="https://github.com/mahdikeshavarz1383" target="_blank" rel="noopener">github.com/mahdikeshavarz1383</a></li>
+      <li><span data-fa="تلگرام">telegram</span> @yourhandle</li>
+      <li><span data-fa="لینکدین">linkedin</span> linkedin.com/in/yourhandle</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap" data-fa="ساخته و دیپلوی‌شده روی یه VPS شخصی">built &amp; deployed on a self-managed VPS</div>
+</footer>
+
+<script>
+  (function(){
+    var STORAGE_KEY = 'site-lang';
+    var toggleBtn = document.getElementById('langToggle');
+    var translatable = document.querySelectorAll('[data-fa]');
+
+    // Cache original English content once, before any swap happens.
+    translatable.forEach(function(el){
+      el.dataset.en = el.innerHTML;
+    });
+
+    function applyLang(lang){
+      translatable.forEach(function(el){
+        el.innerHTML = (lang === 'fa') ? el.dataset.fa : el.dataset.en;
+      });
+      document.documentElement.lang = lang;
+      document.documentElement.dir = (lang === 'fa') ? 'rtl' : 'ltr';
+      document.body.classList.toggle('rtl', lang === 'fa');
+      if (toggleBtn) toggleBtn.textContent = (lang === 'fa') ? 'English' : 'فارسی';
+      try { localStorage.setItem(STORAGE_KEY, lang); } catch(e){}
+    }
+
+    if (toggleBtn){
+      toggleBtn.addEventListener('click', function(){
+        var current = document.documentElement.lang === 'fa' ? 'fa' : 'en';
+        applyLang(current === 'fa' ? 'en' : 'fa');
+      });
+    }
+
+    var saved = null;
+    try { saved = localStorage.getItem(STORAGE_KEY); } catch(e){}
+    if (saved === 'fa') applyLang('fa');
+  })();
+</script>
+
+</body>
+</html>
