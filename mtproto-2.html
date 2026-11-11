@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MTProto — Mahdi Keshavarz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #12161c;
+    --bg-raised: #181e26;
+    --line: #262e38;
+    --text: #e8e6e1;
+    --text-dim: #8b94a1;
+    --amber: #e8a33d;
+    --teal: #4fb0ae;
+    --ok: #6fbf73;
+    --font-head: 'Space Grotesk', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+    --font-fa: 'Vazirmatn', 'Space Grotesk', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg); color:var(--text); font-family:var(--font-head); line-height:1.6; -webkit-font-smoothing:antialiased;}
+  body.rtl{font-family:var(--font-fa); line-height:1.9;}
+  body.rtl .tag, body.rtl .log-meta, body.rtl .fix-label, body.rtl footer,
+  body.rtl .spec-list, body.rtl .fixed-note{font-family:var(--font-fa);}
+  /* Code blocks always stay LTR/monospace, even in Persian mode — commands are literal. */
+  body.rtl .code-block, body.rtl .code-block pre, body.rtl .copy-btn{direction:ltr; text-align:left;}
+  a{color:var(--teal); text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--amber); outline-offset:3px;}
+  .wrap{max-width:760px; margin:0 auto; padding:0 24px;}
+
+  .top-bar{display:flex; justify-content:space-between; align-items:center; margin:32px 0 0;}
+  .back-link{font-family:var(--font-mono); font-size:13px; color:var(--text-dim);}
+  .back-link:hover{color:var(--teal);}
+  .lang-btn{
+    font-family:var(--font-mono); font-size:13px; color:var(--text-dim);
+    background:transparent; border:1px solid var(--line); border-radius:4px;
+    padding:4px 10px; cursor:pointer;
+  }
+  .lang-btn:hover{color:var(--amber); border-color:var(--amber);}
+
+  header.page-hero{padding:24px 0 56px; border-bottom:1px solid var(--line);}
+  .tag{font-family:var(--font-mono); font-size:12px; color:var(--amber); margin-bottom:14px;}
+  h1{font-size:clamp(1.9rem, 4.5vw, 2.6rem); font-weight:600; letter-spacing:-0.02em; margin-bottom:16px;}
+  .lede{color:var(--text-dim); font-size:1.02rem; max-width:56ch;}
+
+  section{padding:56px 0; border-bottom:1px solid var(--line);}
+  section:last-of-type{border-bottom:none;}
+  h2{font-size:1.4rem; font-weight:600; margin-bottom:8px;}
+  .section-note{color:var(--text-dim); font-size:0.95rem; margin-bottom:32px; max-width:56ch;}
+
+  .explainer p{margin-bottom:16px; max-width:64ch;}
+  .explainer p:last-child{margin-bottom:0;}
+  .explainer strong{color:var(--text); font-weight:600;}
+
+  .term-list{list-style:none; margin-top:24px;}
+  .term-list li{display:grid; grid-template-columns:110px 1fr; gap:16px; padding:12px 0; border-bottom:1px dashed var(--line);}
+  .term-list li:last-child{border-bottom:none;}
+  .term-list .term{font-family:var(--font-mono); font-size:13px; color:var(--amber);}
+  .term-list .def{color:var(--text-dim); font-size:0.93rem;}
+
+  .spec-list{list-style:none; font-family:var(--font-mono); font-size:0.9rem; margin-top:8px;}
+  .spec-list li{padding:6px 0; color:var(--text-dim);}
+  .spec-list span{color:var(--text);}
+
+  .step{margin-bottom:28px;}
+  .step-head{display:flex; align-items:center; gap:12px; margin-bottom:10px;}
+  .step-num{
+    font-family:var(--font-mono); font-size:12px; color:var(--bg);
+    background:var(--amber); width:22px; height:22px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .step h3{font-size:1rem; font-weight:600;}
+  .step p.note{color:var(--text-dim); font-size:0.9rem; margin:8px 0 0 34px;}
+
+  .code-block{
+    position:relative; background:var(--bg-raised); border:1px solid var(--line);
+    border-radius:6px; margin-left:34px; overflow:hidden;
+  }
+  .code-block pre{
+    font-family:var(--font-mono); font-size:0.85rem; color:var(--text);
+    padding:16px 46px 16px 18px; overflow-x:auto; white-space:pre;
+  }
+  .copy-btn{
+    position:absolute; top:8px; right:8px;
+    font-family:var(--font-mono); font-size:11px; color:var(--text-dim);
+    background:var(--bg); border:1px solid var(--line); border-radius:4px;
+    padding:4px 8px; cursor:pointer;
+  }
+  .copy-btn:hover{color:var(--amber); border-color:var(--amber);}
+  .copy-btn.copied{color:var(--ok); border-color:var(--ok);}
+
+  .fixed-note{font-family:var(--font-mono); font-size:11px; color:var(--teal); margin:8px 0 0 34px;}
+
+  .log-entry{background:var(--bg-raised); border:1px solid var(--line); border-radius:6px; padding:22px 24px; margin-bottom:16px;}
+  .log-meta{font-family:var(--font-mono); font-size:12px; color:var(--text-dim); display:flex; gap:14px; flex-wrap:wrap; margin-bottom:10px; align-items:center;}
+  .log-status{color:var(--ok); border:1px solid rgba(111,191,115,0.35); padding:2px 8px; border-radius:3px; font-size:11px;}
+  .log-entry h3{font-size:1.05rem; font-weight:600; margin-bottom:8px;}
+  .log-entry p{color:var(--text-dim); font-size:0.93rem;}
+  .log-entry p + p{margin-top:8px;}
+  .log-entry p + .code-block{margin:8px 0 14px 0;}
+  .log-entry .code-block{margin-left:0;}
+  .fix-label{font-family:var(--font-mono); font-size:11px; color:var(--teal);}
+
+  footer{padding:40px 0 60px; text-align:center; color:var(--text-dim); font-size:0.85rem; font-family:var(--font-mono);}
+
+  @media (max-width:600px){
+    header.page-hero{padding:16px 0 40px;}
+    .term-list li{grid-template-columns:1fr;}
+    .code-block, .step p.note, .fixed-note{margin-left:0;}
+  }
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="top-bar">
+    <a class="back-link" href="index.html" data-fa="→ برگشت">&larr; back</a>
+    <button class="lang-btn" id="langToggle" type="button">فارسی</button>
+  </div>
+  <header class="page-hero">
+    <div class="tag" data-fa="تکنولوژی / شبکه">technology / networking</div>
+    <h1>MTProto</h1>
+    <p class="lede" data-fa="پروتکل اختصاصی تلگرام برای انتقال داده، و اینکه چطور پراکسی MTProto خودت رو روی یه VPS راه بندازی.">Telegram's own transport protocol, and how to run your own MTProto proxy on a VPS.</p>
+  </header>
+</div>
+
+<section>
+  <div class="wrap explainer">
+    <h2 data-fa="MTProto چیه؟">What is MTProto?</h2>
+    <p class="section-note" data-fa="مرور کلی — هر چیزی که خودت یاد گرفتی و اینجا نیست رو اضافه کن.">General overview — expand this with anything you've learned that isn't covered yet.</p>
+    <p data-fa="&lt;strong&gt;MTProto&lt;/strong&gt; پروتکل اختصاصی‌ایه که تلگرام برای ارتباط کلاینت-سرور استفاده می‌کنه، به‌جای تکیه به TLS ساده مثل بیشتر اپ‌ها. خودش رمزنگاری، احراز هویت و انتقال پیام رو مدیریت می‌کنه."><strong>MTProto</strong> is the custom protocol Telegram uses for client-server communication, instead of relying on plain TLS like most apps. It handles encryption, authentication, and message transport itself.</p>
+    <p data-fa="یه &lt;strong&gt;پراکسی MTProto&lt;/strong&gt; یه رله‌ی سبکه که روی سرور خودت اجرا می‌کنی. کلاینت‌های تلگرام به‌جای اتصال مستقیم به تلگرام، به پراکسی تو وصل می‌شن؛ پراکسی هم ترافیک رو به دیتاسنترهای تلگرام فوروارد می‌کنه. چون اتصال به پراکسی تو شبیه اتصال به تلگرام نیست، این روش معمولاً برای دور زدن بلاک شدن رنج آی‌پی‌های تلگرام در سطح شبکه استفاده می‌شه.">An <strong>MTProto proxy</strong> is a lightweight relay you run on your own server. Telegram clients connect to your proxy instead of connecting to Telegram directly; the proxy then forwards traffic to Telegram's data centers. Because the connection to your proxy doesn't look like a connection to Telegram, this is commonly used to get around network-level blocking of Telegram's own IP ranges.</p>
+    <p data-fa="برخلاف VPN، فقط ترافیک تلگرام رو پراکسی می‌کنه، نه کل سیستم رو — به همین دلیله که روی یه VPS کوچیک هم ارزون تمومم می‌شه.">Unlike a VPN, it only proxies Telegram traffic — not your whole system — which is part of why it's cheap to run on a small VPS.</p>
+
+    <ul class="term-list">
+      <li><span class="term" data-fa="پراکسی در برابر VPN">Proxy vs VPN</span><span class="def" data-fa="VPN همه‌ی ترافیک رو تونل می‌کنه؛ پراکسی MTProto فقط ترافیک تلگرام رو، پس به مراتب CPU/RAM کمتری لازم داره.">A VPN tunnels all traffic; an MTProto proxy only tunnels Telegram's traffic, so it needs far less CPU/RAM.</span></li>
+      <li><span class="term">Secret</span><span class="def" data-fa="کلید مخصوص هر کاربر که کلاینت‌ها برای اتصال ازش استفاده می‌کنن. هر کی این رو داشته باشه می‌تونه از پراکسی تو استفاده کنه، پس مثل یه رمز عبور باهاش رفتار کن.">The per-user key clients use to connect. Anyone with it can use your proxy, so treat it like a password.</span></li>
+      <li><span class="term">Fake-TLS</span><span class="def" data-fa="حالتی که پراکسی ترافیکش رو به شکل یه اتصال HTTPS معمولی به یه دامنه‌ی واقعی‌نما درمیاره، که تشخیص و بلاک کردنش رو سخت‌تر می‌کنه.">A mode where the proxy disguises its traffic as a normal HTTPS connection to a real-looking domain, making it harder to fingerprint and block.</span></li>
+      <li><span class="term">AD_TAG</span><span class="def" data-fa="یه تگ اختیاری از @MTProxybot که بهت اجازه می‌ده یه کانال تلگرام رو به کاربرای پراکسیت تبلیغ کنی.">An optional tag from @MTProxybot that lets you advertise a Telegram channel to people using your proxy.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 data-fa="چطور MTProto رو روی یه VPS راه بندازیم">How to run MTProto on a VPS</h2>
+    <p class="section-note" data-fa="با استفاده از &lt;a href=&quot;https://github.com/alexbers/mtprotoproxy&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;alexbers/mtprotoproxy&lt;/a&gt; — یه پیاده‌سازی پایتونی، خوب نگه‌داری‌شده و پرکاربرد (بیش از ۵۰۰ هزار pull) که از اول با پشتیبانی Docker Compose میاد.">Using <a href="https://github.com/alexbers/mtprotoproxy" target="_blank" rel="noopener">alexbers/mtprotoproxy</a> — a well-maintained, widely used (500K+ pulls) Python implementation that ships with Docker Compose support out of the box.</p>
+
+    <p style="color:var(--text-dim); font-size:0.9rem; margin-bottom:24px;" data-fa="حداقل مشخصات پیشنهادی VPS:">Recommended minimum VPS specs:</p>
+    <ul class="spec-list" style="margin-bottom:32px;">
+      <li data-fa="سیستم‌عامل: &lt;span&gt;Ubuntu (نسخه ۲۲.۰۴ به بعد)&lt;/span&gt;">OS: <span>Ubuntu (22.04 or newer)</span></li>
+      <li data-fa="منابع: &lt;span&gt;۱ vCPU / ۱ گیگابایت RAM&lt;/span&gt; — به‌راحتی چند هزار کاربر همزمان رو جواب می‌ده">Resources: <span>1 vCPU / 1 GB RAM</span> — comfortably handles a few thousand simultaneous users</li>
+      <li data-fa="منطقه: &lt;span&gt;هلند یا آلمان&lt;/span&gt; (یا هرجا که بهترین تأخیر/کمترین فیلترینگ رو برای کاربرات داره)">Region: <span>Netherlands or Germany</span> (or wherever gives the best latency/least filtering for your users)</li>
+    </ul>
+
+    <div class="step">
+      <div class="step-head"><span class="step-num">1</span><h3 data-fa="آپدیت پکیج‌ها و نصب داکر">Update packages and install Docker</h3></div>
+      <div class="code-block"><pre>sudo apt update
+sudo apt install -y docker.io docker-compose</pre><button class="copy-btn" type="button">copy</button></div>
+      <p class="fixed-note" data-fa="فیکس شد: خود «docker» یه پکیج واقعی apt رو اوبونتو نیست — درستش docker.io (خود engine) به‌همراه docker-compose هست.">fixed: plain "docker" isn't a real apt package on Ubuntu — it's docker.io (the engine) plus docker-compose.</p>
+    </div>
+
+    <div class="step">
+      <div class="step-head"><span class="step-num">2</span><h3 data-fa="فعال‌سازی و استارت سرویس داکر">Enable and start the Docker service</h3></div>
+      <div class="code-block"><pre>sudo systemctl enable --now docker</pre><button class="copy-btn" type="button">copy</button></div>
+      <p class="fixed-note" data-fa="اضافه شد: بدون این مرحله، دستورات بعدی با خطای «cannot connect to the Docker daemon» شکست می‌خورن.">added: without this, later commands fail with "cannot connect to the Docker daemon".</p>
+    </div>
+
+    <div class="step">
+      <div class="step-head"><span class="step-num">3</span><h3 data-fa="کلون کردن ریپوی پراکسی">Clone the proxy repo</h3></div>
+      <div class="code-block"><pre>git clone -b stable https://github.com/alexbers/mtprotoproxy.git
+cd mtprotoproxy</pre><button class="copy-btn" type="button">copy</button></div>
+    </div>
+
+    <div class="step">
+      <div class="step-head"><span class="step-num">4</span><h3 data-fa="ویرایش کانفیگ">Edit the config</h3></div>
+      <div class="code-block"><pre>nano config.py</pre><button class="copy-btn" type="button">copy</button></div>
+      <p class="note" data-fa="&lt;code&gt;PORT&lt;/code&gt;، &lt;code&gt;USERS&lt;/code&gt; و در صورت تمایل &lt;code&gt;AD_TAG&lt;/code&gt; (از @MTProxybot) رو تنظیم کن.">Set <code>PORT</code>, <code>USERS</code>, and optionally <code>AD_TAG</code> (from @MTProxybot).</p>
+    </div>
+
+    <div class="step">
+      <div class="step-head"><span class="step-num">5</span><h3 data-fa="باز کردن پورت روی فایروال">Open the port on the firewall</h3></div>
+      <div class="code-block"><pre>sudo ufw allow &lt;PORT&gt;/tcp</pre><button class="copy-btn" type="button">copy</button></div>
+      <p class="fixed-note" data-fa="اضافه شد: این مرحله جا افتاده بود — بدونش پورت از داخل VPS در دسترسه ولی از بیرون بلاکه.">added: this step was missing — without it, the port is reachable from inside the VPS but blocked from the outside.</p>
+    </div>
+
+    <div class="step">
+      <div class="step-head"><span class="step-num">6</span><h3 data-fa="ساخت و استارت کانتینر">Build and start the container</h3></div>
+      <div class="code-block"><pre>sudo docker-compose up -d --build</pre><button class="copy-btn" type="button">copy</button></div>
+    </div>
+
+    <div class="step">
+      <div class="step-head"><span class="step-num">7</span><h3 data-fa="بررسی اینکه در حال اجراست">Verify it's running</h3></div>
+      <div class="code-block"><pre>sudo docker ps</pre><button class="copy-btn" type="button">copy</button></div>
+      <p class="note" data-fa="باید کانتینر mtprotoproxy رو با وضعیت &lt;code&gt;Up&lt;/code&gt; ببینی.">You should see the mtprotoproxy container listed as <code>Up</code>.</p>
+    </div>
+
+    <div class="step">
+      <div class="step-head"><span class="step-num">8</span><h3 data-fa="گرفتن لینک قابل‌اشتراک پراکسی">Get the shareable proxy link</h3></div>
+      <div class="code-block"><pre>sudo docker-compose logs</pre><button class="copy-btn" type="button">copy</button></div>
+      <p class="note" data-fa="لینک پراکسی (با سکرت توش) تو لاگ‌ها چاپ می‌شه — همینو با کلاینت‌های تلگرام به اشتراک می‌ذاری.">The proxy link (with the secret baked in) is printed in the logs — this is what you share with Telegram clients.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 data-fa="گزارش عیب‌یابی">Troubleshooting Log</h2>
+    <p class="section-note" data-fa="تیکت‌های واقعی MTProto خودت رو اینجا بنویس، دقیقاً با همون فرمت لاگ سایت اصلی.">Your own MTProto cases go here, same format as the main site's log.</p>
+
+    <div class="log-entry">
+      <div class="log-meta"><span>#MTP-001</span><span class="log-status" data-fa="چک‌لیست">checklist</span><span>docker · firewall · networking</span></div>
+      <h3 data-fa="کانتینر پراکسی «Up»‌ه ولی تلگرام وصل نمی‌شه">Proxy container is "Up" but Telegram can't connect</h3>
+      <p data-fa="علامت: &lt;code&gt;docker ps&lt;/code&gt; کانتینر رو در حال اجرا نشون می‌ده ولی کلاینت‌ها به پراکسی وصل نمی‌شن. چون کانتینر سالمه، مشکل معمولاً بین کلاینت و سرویسه، نه خود کانتینر.">Symptom: <code>docker ps</code> shows the container running, but clients can't connect to the proxy. Since the container itself is healthy, the problem is usually somewhere between the client and the service.</p>
+
+      <p class="fix-label" data-fa="علت‌های محتمل (به ترتیب بررسی)">likely causes (check in this order)</p>
+
+      <p data-fa="۱. فایروال: ufw جلوی پورت رو گرفته، یا فایروال جدا تو پنل ارائه‌دهنده‌ی VPS پورت رو بسته.">1. Firewall: ufw is blocking the port, or a separate firewall in the VPS provider's panel is.</p>
+      <div class="code-block"><pre>sudo ufw status
+sudo ufw allow &lt;PORT&gt;/tcp</pre><button class="copy-btn" type="button">copy</button></div>
+
+      <p data-fa="۲. تداخل پورت: یه سرویس دیگه از همون پورت استفاده می‌کنه. این دستور نشون می‌ده چی روی پورت گوش می‌ده:">2. Port conflict: another service is already using the same port. This shows what is actually listening:</p>
+      <div class="code-block"><pre>sudo ss -tlnp | grep &lt;PORT&gt;</pre><button class="copy-btn" type="button">copy</button></div>
+
+      <p data-fa="۳. ناهماهنگی پورت: پورت تو &lt;code&gt;config.py&lt;/code&gt; با چیزی که تو &lt;code&gt;docker-compose.yml&lt;/code&gt; (بخش ports یا network_mode) تنظیم شده یکی نیست. کانتینر Up می‌مونه ولی ترافیک به سرویس نمی‌رسه.">3. Port mismatch: the port in <code>config.py</code> doesn't match what <code>docker-compose.yml</code> exposes (<code>ports</code> or <code>network_mode</code>). The container stays Up, but traffic never reaches the service.</p>
+      <div class="code-block"><pre>cat docker-compose.yml
+sudo docker-compose logs</pre><button class="copy-btn" type="button">copy</button></div>
+
+      <p data-fa="۴. بلاک شدن پورت توسط ISP: تست کن از یه شبکه‌ی دیگه (مثلاً هات‌اسپات موبایل). اگه از یکی وصل شد و از یکی نه، مشکل از مسیر ISP هست، نه سرور. ping برای این کار مناسب نیست، چون پورت خاص رو تست نمی‌کنه؛ از یه سیستم بیرونی این رو بزن:">4. ISP blocking the port: test from a different network (e.g. a mobile hotspot). If it connects from one and not the other, the problem is the ISP path, not the server. ping isn't suitable here since it doesn't test a specific port; from an outside machine use:</p>
+      <div class="code-block"><pre>nc -zv &lt;IP_VPS&gt; &lt;PORT&gt;</pre><button class="copy-btn" type="button">copy</button></div>
+
+      <p class="fix-label" data-fa="راه‌حل">fix</p>
+      <p data-fa="اگه پورت مشکل داشت، تو &lt;code&gt;config.py&lt;/code&gt; عوضش کن، فایروال رو برای پورت جدید باز کن، و کانتینر رو دوباره بالا بیار تا تغییر اعمال بشه:">If the port is the problem, change it in <code>config.py</code>, open the firewall for the new port, then bring the container up again so the change applies:</p>
+      <div class="code-block"><pre>nano config.py
+sudo ufw allow &lt;NEW_PORT&gt;/tcp
+sudo docker-compose up -d --build</pre><button class="copy-btn" type="button">copy</button></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap"><a href="index.html" data-fa="→ برگشت به پورتفولیو">&larr; back to portfolio</a></div>
+</footer>
+
+<script>
+  document.querySelectorAll('.copy-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var pre = btn.previousElementSibling;
+      var text = pre.innerText;
+      navigator.clipboard.writeText(text).then(function(){
+        var original = btn.textContent;
+        btn.textContent = 'copied';
+        btn.classList.add('copied');
+        setTimeout(function(){
+          btn.textContent = original;
+          btn.classList.remove('copied');
+        }, 1500);
+      }).catch(function(){
+        btn.textContent = 'failed';
+      });
+    });
+  });
+
+  (function(){
+    var STORAGE_KEY = 'site-lang';
+    var toggleBtn = document.getElementById('langToggle');
+    var translatable = document.querySelectorAll('[data-fa]');
+
+    translatable.forEach(function(el){
+      el.dataset.en = el.innerHTML;
+    });
+
+    function applyLang(lang){
+      translatable.forEach(function(el){
+        el.innerHTML = (lang === 'fa') ? el.dataset.fa : el.dataset.en;
+      });
+      document.documentElement.lang = lang;
+      document.documentElement.dir = (lang === 'fa') ? 'rtl' : 'ltr';
+      document.body.classList.toggle('rtl', lang === 'fa');
+      if (toggleBtn) toggleBtn.textContent = (lang === 'fa') ? 'English' : 'فارسی';
+      try { localStorage.setItem(STORAGE_KEY, lang); } catch(e){}
+    }
+
+    if (toggleBtn){
+      toggleBtn.addEventListener('click', function(){
+        var current = document.documentElement.lang === 'fa' ? 'fa' : 'en';
+        applyLang(current === 'fa' ? 'en' : 'fa');
+      });
+    }
+
+    var saved = null;
+    try { saved = localStorage.getItem(STORAGE_KEY); } catch(e){}
+    if (saved === 'fa') applyLang('fa');
+  })();
+</script>
+
+</body>
+</html>
